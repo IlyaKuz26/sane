@@ -25,3 +25,35 @@ def create_combination(hidden_size: int, neuron_population_size: int) -> np.ndar
         Массив индексов нейронов.
     """
     return np.random.randint(0, neuron_population_size, size=hidden_size)
+
+def mutate_neuron(weights: np.ndarray, mutation_rate: float) -> np.ndarray:
+    """Мутирует веса нейрона с заданной вероятностью.
+
+    Args:
+        weights: Матрица весов нейрона.
+        mutation_rate: Вероятность мутации.
+
+    Returns:
+        Мутированная матрица весов.
+    """
+    mutation_mask = np.random.rand(*weights.shape) < mutation_rate
+    weights += 0.1 * np.random.randn(*weights.shape) * mutation_mask
+    return weights
+
+def mutate_combination(combination: np.ndarray,
+                       mutation_rate: float,
+                       neuron_population_size: int) -> np.ndarray:
+    """Мутирует комбинацию индексов нейронов.
+
+    Args:
+        combination: Массив индексов нейронов.
+        mutation_rate: Вероятность мутации.
+        neuron_population_size: Размер популяции нейронов.
+
+    Returns:
+        Мутированный массив индексов.
+    """
+    for i in range(len(combination)):
+        if np.random.rand() < mutation_rate:
+            combination[i] = np.random.randint(0, neuron_population_size)
+    return combination
