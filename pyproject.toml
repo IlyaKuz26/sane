@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "sane"
+version = "0.1.0"
+description = ""
+authors = ["Ilya Kuznetsov <ilyaprime26@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+numpy = "^1.26.4"
+scikit-learn = "^1.4.2"
+pandas = "^2.2.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
