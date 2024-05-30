@@ -1,7 +1,13 @@
+from typing import Tuple
+
 import numpy as np
 
+from genenetic_funcs import split_chromosome
+
+
 def relu(x: np.ndarray) -> np.ndarray:
-    """Функция активации ReLU.
+    """
+    Функция активации ReLU.
 
     Args:
         x: Входной массив.
@@ -13,7 +19,8 @@ def relu(x: np.ndarray) -> np.ndarray:
 
 
 def softmax(x: np.ndarray) -> np.ndarray:
-    """Функция активации Softmax.
+    """
+    Функция активации Softmax.
 
     Args:
         x: Входной массив.
@@ -24,7 +31,8 @@ def softmax(x: np.ndarray) -> np.ndarray:
     return np.exp(x) / np.sum(np.exp(x), axis=1, keepdims=True)
 
 def accuracy(y_pred: np.ndarray, y_true: np.ndarray) -> float:
-    """Функция вычисления точности.
+    """
+    Функция для вычисления точности.
 
     Args:
         y_pred: Предсказанные метки.
@@ -36,7 +44,8 @@ def accuracy(y_pred: np.ndarray, y_true: np.ndarray) -> float:
     return np.mean(np.argmax(y_pred, axis=1) == y_true)
 
 def cross_entropy_loss(y_pred: np.ndarray, y_true: np.ndarray) -> float:
-    """Функция вычисления потерь кросс-энтропии.
+    """
+    Функция вычисления потерь кросс-энтропии.
 
     Args:
         y_pred: Предсказанные вероятности.
@@ -54,3 +63,41 @@ def cross_entropy_loss(y_pred: np.ndarray, y_true: np.ndarray) -> float:
 
     negative_log_likehoods = -np.log(confidences)
     return np.mean(negative_log_likehoods)
+
+def create_nn(combination: np.ndarray,
+              chromosome: np.ndarray,
+              hidden_size: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Формирует нейронную сеть из комбинации индексов и хромосомы.
+
+    Args:
+        combination: Массив индексов нейронов.
+        chromosome: Массив весов всех нейронов.
+        hidden_size: Размер скрытого слоя.
+ 
+    Returns:
+        Кортеж из двух матриц весов: для скрытого и выходного слоя.
+    """
+    hidden_weights, output_weights = split_chromosome(chromosome, 784,
+                                                      hidden_size, 10)
+
+    weights1 = np.hstack([hidden_weights[:, i].reshape(-1, 1) for i in combination])
+    weights2 = np.vstack([output_weights[i, :] for i in combination])
+    return weights1, weights2
+
+def predict(X: np.ndarray, weights1: np.ndarray,
+            weights2: np.ndarray) -> np.ndarray:
+    """
+    Выполняет предсказание с помощью нейронной сети.
+
+    Args:
+        X: Входные данные.
+        weights1: Матрица весов для скрытого слоя.
+        weights2: Матрица весов для выходного слоя.
+
+    Returns:
+        Матрица предсказанных вероятностей.
+    """
+    hidden_layer = relu(np.dot(X, weights1))
+    output_layer = softmax(np.dot(hidden_layer, weights2))
+    return output_layer
