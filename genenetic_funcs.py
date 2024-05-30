@@ -54,12 +54,32 @@ def create_combination(population_size: int, hidden_size: int) -> np.ndarray:
     """
     return np.random.randint(0, population_size, size=hidden_size)
 
-def mutate_neuron(chromosome: np.ndarray, mutation_rate: float) -> np.ndarray:
+def crossover(parent1: np.ndarray, parent2: np.ndarray,
+              crossover_rate: float) -> np.ndarray:
+    """
+    Скрещивает две родительские особи.
+
+    Args:
+        parent1: Первая родительская особь.
+        parent2: Вторая родительская особь.
+        crossover_rate: Вероятность скрещивания.
+
+    Returns:
+        Потомок или первый родитель.
+    """
+    if np.random.rand() < crossover_rate:
+        crossover_point = np.random.randint(1, parent1.size)
+        child = np.concatenate((parent1[:crossover_point], parent2[crossover_point:]))
+        return child
+    else:
+        return parent1
+
+def mutate_chromosome(chromosome: np.ndarray, mutation_rate: float) -> np.ndarray:
     """
     Мутирует веса хромосомы с заданной вероятностью.
 
     Args:
-        weights: Матрица весов нейрона.
+        chromosome: Хромосома с весами нейронов.
         mutation_rate: Вероятность мутации.
 
     Returns:
