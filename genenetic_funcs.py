@@ -3,6 +3,9 @@ from typing import Tuple
 import numpy as np
 
 
+# Установка сида для генераторов случайных чисел
+np.random.seed(42)
+
 def create_chromosome(input_size: int, hidden_size: int, output_size: int) -> np.ndarray:
     """
     Создает хромосому, содержащую веса для всех нейронов.
@@ -41,18 +44,17 @@ def split_chromosome(chromosome: np.ndarray,
     output_weights = chromosome[hidden_weights_size:].reshape(hidden_size, output_size)
     return hidden_weights, output_weights
 
-def create_combination(population_size: int, hidden_size: int) -> np.ndarray:
+def create_combination(hidden_size: int) -> np.ndarray:
     """
     Создает комбинацию индексов нейронов.
 
     Args:
-        population_size: Размер популяции.
         hidden_size: Количество нейронов в комбинации (размер скрытого слоя).
         
     Returns:
         Массив индексов нейронов.
     """
-    return np.random.randint(0, population_size, size=hidden_size)
+    return np.random.randint(0, hidden_size, size=hidden_size)
 
 def crossover(parent1: np.ndarray, parent2: np.ndarray,
               crossover_rate: float) -> np.ndarray:
@@ -91,19 +93,19 @@ def mutate_chromosome(chromosome: np.ndarray, mutation_rate: float) -> np.ndarra
 
 def mutate_combination(combination: np.ndarray,
                        mutation_rate: float,
-                       population_size: int) -> np.ndarray:
+                       hidden_size: int) -> np.ndarray:
     """
     Мутирует комбинацию индексов нейронов.
 
     Args:
         combination: Массив индексов нейронов.
         mutation_rate: Вероятность мутации.
-        population_size: Размер популяции.
+        hidden_size: Размер скрытого слоя.
 
     Returns:
         Мутированный массив индексов.
     """
     for i in range(len(combination)):
         if np.random.rand() < mutation_rate:
-            combination[i] = np.random.randint(0, population_size)
+            combination[i] = np.random.randint(0, hidden_size)
     return combination
