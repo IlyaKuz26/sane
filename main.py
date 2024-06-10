@@ -20,7 +20,7 @@ def main(experiment=1, iterations=5):
     # Гипперпараметры
     POPULATION_SIZE = 50  # Размер популяции
     MUTATION_RATE = 0.01  # Вероятность мутации
-    CROSSOVER_RATE = 0.9  # Вероятность кроссинговера
+    CROSSOVER_RATE = 0.6  # Вероятность кроссинговера
     HIDDEN_SIZE = 64  # Размер скрытого слоя
     EPOCHS = 5  # Количество эпох обучения/популяций
 
@@ -75,8 +75,14 @@ def main(experiment=1, iterations=5):
             train_loss = chromosome_fitness[0]
             print(f'Потери лучшей особи: {train_loss:.4f}, Точность: {train_accuracy:.4f}')
 
+            # Запись потерь и точности лучшей особи в текущем поколении
             total_train_losses[k, epoch] = train_loss
             total_train_accuracies[k, epoch] = train_accuracy
+
+            # Визуализация структуры нейросети на первой и последней эпохе
+            if epoch == 0 or epoch == EPOCHS - 1:
+                visualize_network(chromosomes[0], combinations[0], HIDDEN_SIZE,
+                                f"plot/network_exp{experiment}_iter{k+1}_epoch{epoch+1}.html")
 
             # Скрещивание хромосом и комбинаций
             new_chromosomes = []
@@ -112,7 +118,8 @@ def main(experiment=1, iterations=5):
         test_accuracy = accuracy(y_pred, y_test)
         print(f'Тестовая точность: {test_accuracy:.4f}')
 
-        filepath = f'model/model_exp{experiment}_iter{k}.pkl'
+        # Сохранение параметров лучшей особи
+        filepath = f'model/model_exp{experiment}_iter{k+1}.pkl'
         with open(filepath, 'wb') as f:
             pickle.dump((best_combination, best_chromosome), f)
     
