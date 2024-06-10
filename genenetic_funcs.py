@@ -3,9 +3,6 @@ from typing import Tuple
 import numpy as np
 
 
-# Установка сида для генераторов случайных чисел
-np.random.seed(42)
-
 def create_chromosome(input_size: int, hidden_size: int, output_size: int) -> np.ndarray:
     """
     Создает хромосому, содержащую веса для всех нейронов.

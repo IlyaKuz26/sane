@@ -1,5 +1,5 @@
 /.venv
-/example.py
-/explanation.docx
-/test.py
-/~$planation.docx
+/__pycache__
+/lib
+/model
+/plot

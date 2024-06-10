@@ -5,9 +5,6 @@ import numpy as np
 from genenetic_funcs import split_chromosome
 
 
-# Установка сида для генераторов случайных чисел
-np.random.seed(42)
-
 def relu(x: np.ndarray) -> np.ndarray:
     """
     Функция активации ReLU.
