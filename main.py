@@ -1,12 +1,12 @@
 import pickle
 
-import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.datasets import fetch_openml
 from sklearn.model_selection import train_test_split
 
 from genenetic_funcs import *
 from nn_funcs import *
+from plot_funcs import *
 
 
 def main(experiment=1, iterations=5):
@@ -17,12 +17,14 @@ def main(experiment=1, iterations=5):
         experiment: Номер эксперимента
         iterations: Количество итераций генетического алгоритма.
     """
+    print('Эксперимент', experiment)
+
     # Гипперпараметры
     POPULATION_SIZE = 50  # Размер популяции
     MUTATION_RATE = 0.01  # Вероятность мутации
     CROSSOVER_RATE = 0.6  # Вероятность кроссинговера
     HIDDEN_SIZE = 64  # Размер скрытого слоя
-    EPOCHS = 5  # Количество эпох обучения/популяций
+    EPOCHS = 50  # Количество эпох обучения/популяций
 
     # Загрузка датасета MNIST
     X, y = fetch_openml('mnist_784', version=1, return_X_y=True)
@@ -80,9 +82,10 @@ def main(experiment=1, iterations=5):
             total_train_accuracies[k, epoch] = train_accuracy
 
             # Визуализация структуры нейросети на первой и последней эпохе
-            if epoch == 0 or epoch == EPOCHS - 1:
-                visualize_network(chromosomes[0], combinations[0], HIDDEN_SIZE,
-                                f"plot/network_exp{experiment}_iter{k+1}_epoch{epoch+1}.html")
+            # if epoch == 0 or epoch == EPOCHS - 1:
+            #     filepath = f'plot/network_exp{experiment}_iter{k+1}_epoch{epoch+1}.html'
+            #     visualize_network(chromosomes[0], combinations[0],
+            #                       HIDDEN_SIZE, filepath)
 
             # Скрещивание хромосом и комбинаций
             new_chromosomes = []
@@ -133,27 +136,9 @@ def main(experiment=1, iterations=5):
         pickle.dump((mean_train_losses, mean_train_accuracies), f)
 
     # Построение графиков
-    plt.figure(figsize=(12, 5))
-
-    x_axis = np.arange(1, EPOCHS + 1)
-
-    # График усредненных потерь
-    plt.subplot(1, 2, 1)
-    plt.plot(x_axis, mean_train_losses) 
-    plt.title('Изменение усредненных потерь')
-    plt.xlabel('Поколение')
-    plt.ylabel('Усредненные потери')
-    plt.xticks(x_axis)
-
-    # График усредненной точности
-    plt.subplot(1, 2, 2)
-    plt.plot(x_axis, mean_train_accuracies)
-    plt.title('Изменение усредненной точности')
-    plt.xlabel('Поколение')
-    plt.ylabel('Усредненная точность')
-    plt.xticks(x_axis)
-
-    plt.show()
+    filepath = f'plot/plot_exp{experiment}.png'
+    plot_results(total_train_losses, total_train_accuracies,
+                 filepath)
 
 if __name__ == '__main__':
     main(experiment=1, iterations=5)

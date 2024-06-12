@@ -1,7 +1,6 @@
 from typing import Tuple
 
 import numpy as np
-from pyvis.network import Network
 
 from genenetic_funcs import split_chromosome
 
@@ -102,50 +101,3 @@ def predict(X: np.ndarray, weights1: np.ndarray,
     hidden_layer = relu(np.dot(X, weights1))
     output_layer = softmax(np.dot(hidden_layer, weights2))
     return output_layer
-
-def visualize_network(chromosome: np.ndarray, combination: np.ndarray,
-                     hidden_size: int, filepath: str):
-    """
-    Визуализирует структуру нейронной сети с помощью pyvis.
-
-    Args:
-        chromosome: Хромосома, содержащая веса сети.
-        combination: Комбинация индексов нейронов.
-        hidden_size: Размер скрытого слоя.
-        filepath: Путь к файлу для сохранения визуализации.
-    """
-    net = Network(height='900px', width='1200px', directed=True)
-    net.options.layout = {'hierarchical': {'enabled': True, 'direction': 'LR', 'sortMethod': 'directed'}}
-    net.toggle_physics(False)
-
-    # Добавление входных нейронов
-    input_neurons = 784 // 8  # Уменьшаем число нейронов для улучшения читаемости
-    for i in range(input_neurons): 
-        net.add_node(f'input_{i}', label=f'Вх{i}', color='#00FF00')
-
-    # Добавление скрытых нейронов
-    for i, hidden_idx in enumerate(combination):
-        net.add_node(f'hidden_{hidden_idx}', label=f'Скр{hidden_idx}', color='#FFFF00')
-
-    # Добавление выходных нейронов
-    for i in range(10):
-        net.add_node(f'output_{i}', label=f'Вых{i}', color='#FF0000')
-
-    # Добавление связей
-    hidden_weights, output_weights = split_chromosome(chromosome, 784, hidden_size, 10)
-    for i, hidden_idx in enumerate(combination):
-        for j in range(input_neurons):
-            weight = hidden_weights[j, hidden_idx]
-            net.add_edge(f'input_{j}', f'hidden_{hidden_idx}', 
-                         value=abs(weight),
-                         color='#FF0000' if weight > 0 else '#0000FF',
-                         title=f'{weight:.2f}')
-        for j in range(10):
-            weight = output_weights[hidden_idx, j]
-            net.add_edge(f'hidden_{hidden_idx}', f'output_{j}', 
-                         value=abs(weight),
-                         color='#FF0000' if weight > 0 else '#0000FF',
-                         title=f'{weight:.2f}')
-            
-    # Сохранение визуализации в HTML-файл
-    net.save_graph(filepath)
